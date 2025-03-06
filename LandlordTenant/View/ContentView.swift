@@ -9,12 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     
-    var fireAuthHelper = FireAuthHelper.getInstance()
+    // This is a comment
     
     @State private var root: RootView = .Login
     
+    var fireAuthHelper = FireAuthHelper.getInstance()
+    
     var body: some View {
+
         NavigationStack {
+            
             switch root {
             case .Login:
                 SignInView(rootScreen: self.$root)

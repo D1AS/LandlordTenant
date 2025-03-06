@@ -10,6 +10,7 @@
 		7B8F09182D765ED80025AE7D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7B8F09172D765ED80025AE7D /* FirebaseAuth */; };
 		7B8F091A2D765ED80025AE7D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7B8F09192D765ED80025AE7D /* FirebaseCore */; };
 		7B8F091C2D765ED80025AE7D /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7B8F091B2D765ED80025AE7D /* FirebaseDatabase */; };
+		D12BFAC22D7A017C0043F81E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D12BFAC12D7A017C0043F81E /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B8F091C2D765ED80025AE7D /* FirebaseDatabase in Frameworks */,
+				D12BFAC22D7A017C0043F81E /* FirebaseFirestore in Frameworks */,
 				7B8F091A2D765ED80025AE7D /* FirebaseCore in Frameworks */,
 				7B8F09182D765ED80025AE7D /* FirebaseAuth in Frameworks */,
 			);
@@ -77,6 +79,7 @@
 				7B8F09172D765ED80025AE7D /* FirebaseAuth */,
 				7B8F09192D765ED80025AE7D /* FirebaseCore */,
 				7B8F091B2D765ED80025AE7D /* FirebaseDatabase */,
+				D12BFAC12D7A017C0043F81E /* FirebaseFirestore */,
 			);
 			productName = LandlordTenant;
 			productReference = 7B8F08E42D74C1B10025AE7D /* LandlordTenant.app */;
@@ -368,6 +371,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7B8F09162D765ED80025AE7D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseDatabase;
+		};
+		D12BFAC12D7A017C0043F81E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7B8F09162D765ED80025AE7D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
