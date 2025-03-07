@@ -13,7 +13,6 @@ class FireDBHelper : ObservableObject {
     @Published var propertyList = [Property]()
     @Published var isUpdateComplete: Bool = false
 
-//    private let COLLECTION_TENANTLANDLORD_DB: String = "TenantLandlordDB"
     private let COLLECTION_PROPERTIES: String = "Properties"
     private let FIELD_DESC : String = "desc"
     private let FIELD_ADDRESS : String = "address"
@@ -39,7 +38,6 @@ class FireDBHelper : ObservableObject {
     func insertListing(newProperty: Property) {
         do {
             try db
-//                .collection(COLLECTION_TENANTLANDLORD_DB)
                 .collection(COLLECTION_PROPERTIES)
                 .addDocument(from: newProperty)
         } catch let err as NSError {
@@ -73,10 +71,10 @@ class FireDBHelper : ObservableObject {
 
                         switch docChange.type {
                         case .added:
-                            print("Movie Added")
+//                            print("Movie Added")
                             self.propertyList.append(property)
                         case .modified:
-                            print("Movie Updated: \(docChange.document.documentID)")
+//                            print("Movie Updated: \(docChange.document.documentID)")
                             if(matchedIndex != nil) {
                                 self.propertyList[matchedIndex!] = property
                             }

@@ -41,13 +41,17 @@ struct PropertyListView: View {
 
                 List {
                     ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { index, currentProperty in
-                    //ForEach(fireDBHelper.propertyList.enumerated().map({$0}), id: \.element.id) { index, currentProperty in
-                        Button(action: {
-                            selectedPropertyWrapper.selectedProperty = currentProperty // Set via wrapper
-                            print("Selected Property: \(String(describing: selectedPropertyWrapper.selectedProperty)))")
-                            showDetailView = true
-                        }) {
+                        NavigationLink {
+                           PropertyDetailsView(property: currentProperty, isNew: false)
+                            .environmentObject(fireDBHelper)
+                            .environmentObject(selectedPropertyWrapper)
+
+                            .onAppear {
+                                print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
+                            }
+                        } label: {
                             PropertyRow(property: currentProperty)
+                                .buttonStyle(.plain)
                         }
                     }
                 }
@@ -66,17 +70,6 @@ struct PropertyListView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showDetailView) {
-                if let property = selectedPropertyWrapper.selectedProperty {
-                    PropertyDetailsView(property: property, isNew: false)
-                        .environmentObject(fireDBHelper)
-                        .environmentObject(selectedPropertyWrapper)
-
-                        .onAppear {
-                            print("Presenting DetailView for: \(property.id ?? "no id")")
-                        }
-                }
-            }
             .sheet(isPresented: $showingCreatePropertyView) {
                 CreatePropertyView()
                     .environmentObject(fireDBHelper)
@@ -85,11 +78,14 @@ struct PropertyListView: View {
     }
 }
 
+// .font(.callout) // Slightly smaller than .subheadline
+
 struct PropertyRow: View {
     let property: Property
-    
+    @State private var isFavorite: Bool = false // Add state
+
     var body: some View {
-        HStack {
+        HStack(alignment: .top) {
             AsyncImage(url: property.imageUrl) { image in
                 image
                     .resizable()
@@ -97,23 +93,53 @@ struct PropertyRow: View {
             } placeholder: {
                 ProgressView()
             }
-            .frame(width: 80, height: 80)
+            .frame(width: 100, height: 100)
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.trailing, 20)
+          
             
             VStack(alignment: .leading) {
-                Text(property.address)
-                    .font(.headline)
+                Text(property.monthlyRentalPrice, format: .currency(code: Locale.current.currency?.identifier ?? "CAN"))
+                    .font(.title3)
+                    .fontWeight(.bold)
                     .lineLimit(1)
-                Text("\(property.city), \(property.isAvailable ? "Available" : "Not Available")")
+
+                HStack {
+                    Text("\(property.numberOfBedrooms) Beds")
+                    Text("|")
+                    Text("\(property.numberOfBathrooms) Baths")
+                }
+                .font(.callout)
+                .foregroundColor(Color.gray)
+
+                Text(property.address)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                    .foregroundColor(Color.green)
+
+                Text(property.city)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
+
             Spacer()
+
+            Button {
+                isFavorite.toggle()
+                if isFavorite {
+                    print("Favorite!")
+                } else {
+                    print("Not favorite")
+                }
+            } label: {
+                Image(systemName: isFavorite ? "star.fill" : "star")
+                    .font(.title2)
+                    .foregroundColor(.yellow)
+            }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
     }
 }
-
 
 class SelectedPropertyWrapper: ObservableObject {
     @Published var selectedProperty: Property? = nil
