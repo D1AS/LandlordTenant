@@ -33,6 +33,7 @@ struct ContentView: View {
 //            case .PropertyList:
 //                PropertyListView(rootScreen: self.$root)
 //                    .environmentObject(self.fireAuthHelper)
+//                    .environmentObject(self.fireDBHelper)
 //            }
         }
     }
