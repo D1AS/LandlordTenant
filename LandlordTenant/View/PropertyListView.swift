@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct PropertyListView: View {
-//    @ObservedObject var fireDBHelper = FireDBHelper.getInstance()
+    //    @ObservedObject var fireDBHelper = FireDBHelper.getInstance()
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
     @EnvironmentObject var fireDBHelper: FireDBHelper
-
+    
     @State private var searchText = ""
     @State private var showDetailView = false
     @StateObject private var selectedPropertyWrapper = SelectedPropertyWrapper()
     @State private var showingCreatePropertyView = false
     
     @Binding var rootScreen: RootView
-
+    
     
     var filteredProperties: [Property] {
         if searchText.isEmpty {
@@ -29,60 +29,92 @@ struct PropertyListView: View {
             }
         }
     }
-
+    
     var body: some View {
-        NavigationView {
+        NavigationStack {
+            
             VStack {
-                TextField("Search by City", text: $searchText)
-                    .padding(7)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-
-                List {
-                    ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { index, currentProperty in
-                        NavigationLink {
-                           PropertyDetailsView(property: currentProperty, isNew: false)
-                            .environmentObject(fireDBHelper)
-                            .environmentObject(selectedPropertyWrapper)
-
-                            .onAppear {
-                                print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 0)
+                        .fill(Color(uiColor: .systemTeal))
+                        .frame(height: 50)
+                        .frame(maxWidth: .infinity)
+                    
+                    HStack {
+                        Image(systemName: "sun.max")
+                            .padding(.leading, 5)
+                            .foregroundColor(Color.white)
+                        
+                        Text("Rentals.ca")
+                            .padding(.trailing, 5)
+                            .foregroundColor(Color.white)
+                        
+                        Spacer()
+                        
+                        TextField("Search by City", text: $searchText)
+                            .padding(7)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .padding(.trailing, 5)
+                            .frame(maxWidth: .infinity)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                    }
+                    .frame(height: 50)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 10)
+                }
+                               
+                    
+                    List {
+                        ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { index, currentProperty in
+                            NavigationLink {
+                                PropertyDetailsView(property: currentProperty, isNew: false)
+                                    .environmentObject(fireDBHelper)
+                                    .environmentObject(selectedPropertyWrapper)
+                                
+                                    .onAppear {
+                                        print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
+                                    }
+                            } label: {
+                                PropertyRow(property: currentProperty)
+                                    .buttonStyle(.plain)
                             }
-                        } label: {
-                            PropertyRow(property: currentProperty)
-                                .buttonStyle(.plain)
+                        }
+                    }
+                    .listStyle(.plain)
+                    .onAppear {
+                        fireDBHelper.propertyList = []
+                        fireDBHelper.getAllListings()
+                    }
+                    
+                    //                .navigationTitle("Properties")
+                    
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                showingCreatePropertyView = true
+                            } label: {
+                                Image(systemName: "plus")
+                            }
                         }
                     }
                 }
-                .onAppear {
-                    fireDBHelper.propertyList = []
-                    fireDBHelper.getAllListings()
+                .sheet(isPresented: $showingCreatePropertyView) {
+                    CreatePropertyView()
+                        .environmentObject(fireDBHelper)
                 }
-                .navigationTitle("Properties")
-                .toolbar { // Moved the button to the toolbar
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showingCreatePropertyView = true
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $showingCreatePropertyView) {
-                CreatePropertyView()
-                    .environmentObject(fireDBHelper)
             }
         }
     }
-}
+
 
 // .font(.callout) // Slightly smaller than .subheadline
 
 struct PropertyRow: View {
     let property: Property
-    @State private var isFavorite: Bool = false // Add state
+    @State private var isFavorite: Bool = false
 
     var body: some View {
         HStack(alignment: .top) {

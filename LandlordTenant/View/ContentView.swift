@@ -19,22 +19,18 @@ struct ContentView: View {
 
         NavigationStack {
 
-            PropertyListView(rootScreen: self.$root)
-                .environmentObject(self.fireAuthHelper)
-                .environmentObject(self.fireDBHelper)
-
-//            switch root {
-//            case .Login:
-//                SignInView(rootScreen: self.$root)
-//                    .environmentObject(self.fireAuthHelper)
-//            case .SignUp:
-//                SignUpView(rootScreen: self.$root)
-//                    .environmentObject(self.fireAuthHelper)
-//            case .PropertyList:
-//                PropertyListView(rootScreen: self.$root)
-//                    .environmentObject(self.fireAuthHelper)
-//                    .environmentObject(self.fireDBHelper)
-//            }
+            switch root {
+            case .Login:
+                SignInView(rootScreen: self.$root)
+                    .environmentObject(self.fireAuthHelper)
+            case .SignUp:
+                SignUpView(rootScreen: self.$root)
+                    .environmentObject(self.fireAuthHelper)
+            case .PropertyList:
+                PropertyListView(rootScreen: self.$root)
+                    .environmentObject(self.fireAuthHelper)
+                    .environmentObject(self.fireDBHelper)
+            }
         }
     }
 }
