@@ -1,6 +1,6 @@
 //
 //  PropertyListView.swift
-//  LandlordTenandt
+//  LandlordTenant
 //
 //  Created by Henrique Machitte on 02/03/25.
 //
@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PropertyListView: View {
-    //    @ObservedObject var fireDBHelper = FireDBHelper.getInstance()
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
     @EnvironmentObject var fireDBHelper: FireDBHelper
     
@@ -18,7 +17,6 @@ struct PropertyListView: View {
     @State private var showingCreatePropertyView = false
     
     @Binding var rootScreen: RootView
-    
     
     var filteredProperties: [Property] {
         if searchText.isEmpty {
@@ -31,86 +29,131 @@ struct PropertyListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            
-            VStack {
-                
+        TabView {
+            // PROPERTIES TAB
+            NavigationStack {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 0)
-                        .fill(Color(uiColor: .systemTeal))
-                        .frame(height: 50)
-                        .frame(maxWidth: .infinity)
-                    
-                    HStack {
-                        Image(systemName: "sun.max")
-                            .padding(.leading, 5)
-                            .foregroundColor(Color.white)
-                        
-                        Text("Rentals.ca")
-                            .padding(.trailing, 5)
-                            .foregroundColor(Color.white)
-                        
+                    VStack {
+                        // header with search bar
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 0)
+                                .fill(Color(uiColor: .systemTeal))
+                                .frame(height: 50)
+                                .frame(maxWidth: .infinity)
+
+                            HStack {
+                                Image(systemName: "sun.max")
+                                    .padding(.leading, 5)
+                                    .foregroundColor(Color.white)
+
+                                Text("Rentals.ca")
+                                    .padding(.trailing, 5)
+                                    .foregroundColor(Color.white)
+
+                                Spacer()
+
+                                TextField("Search by City", text: $searchText)
+                                    .padding(7)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                                    .padding(.trailing, 5)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .frame(height: 50)
+                            .padding(.horizontal, 10)
+                        }
+
+                        // Property list
+                        List {
+                            ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { _, currentProperty in
+                                NavigationLink {
+                                    PropertyDetailsView(property: currentProperty, isNew: false)
+                                        .environmentObject(fireDBHelper)
+                                        .environmentObject(selectedPropertyWrapper)
+                                        .onAppear {
+                                            print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
+                                        }
+                                } label: {
+                                    PropertyRow(property: currentProperty)
+                                        .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .listStyle(.plain)
+                        .onAppear {
+                            fireDBHelper.propertyList = []
+                            fireDBHelper.getAllListings()
+                        }
+                    }
+
+                    // Floating Action Button (FAB) to add new property
+                    VStack {
                         Spacer()
-                        
-                        TextField("Search by City", text: $searchText)
-                            .padding(7)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.trailing, 5)
-                            .frame(maxWidth: .infinity)
-                            .fixedSize(horizontal: false, vertical: true)
-                        
-                    }
-                    .frame(height: 50)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 10)
-                }
-                               
-                    
-                    List {
-                        ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { index, currentProperty in
-                            NavigationLink {
-                                PropertyDetailsView(property: currentProperty, isNew: false)
-                                    .environmentObject(fireDBHelper)
-                                    .environmentObject(selectedPropertyWrapper)
-                                
-                                    .onAppear {
-                                        print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
-                                    }
-                            } label: {
-                                PropertyRow(property: currentProperty)
-                                    .buttonStyle(.plain)
-                            }
-                        }
-                    }
-                    .listStyle(.plain)
-                    .onAppear {
-                        fireDBHelper.propertyList = []
-                        fireDBHelper.getAllListings()
-                    }
-                    
-                    //                .navigationTitle("Properties")
-                    
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
+                        HStack {
+                            Spacer()
+                            Button(action: {
                                 showingCreatePropertyView = true
-                            } label: {
+                            }) {
                                 Image(systemName: "plus")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 4)
                             }
+                            .padding()
                         }
                     }
                 }
+                .navigationTitle("Properties")
                 .sheet(isPresented: $showingCreatePropertyView) {
                     CreatePropertyView()
                         .environmentObject(fireDBHelper)
                 }
             }
+            .tabItem {
+                Label("Properties", systemImage: "building.2.fill")
+            }
+
+            // FAVORITES TAB
+            NavigationStack {
+                Text("Favorites")
+            }
+            .tabItem {
+                Label("Favorites", systemImage: "star.fill")
+            }
+
+            // REQUESTS TAB
+            NavigationStack {
+                Text("Requests")
+            }
+            .tabItem {
+                Label("Requests", systemImage: "envelope.fill")
+            }
+
+            // PROFILE TAB
+            NavigationStack {
+                ProfileView()
+                                    .environmentObject(fireAuthHelper)
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.crop.circle.fill")
+            }
+
+            // LOGOUT TAB
+            Button("Logout") {
+                fireAuthHelper.signOut()
+                rootScreen = .Login
+            }
+            .tabItem {
+                Label("Logout", systemImage: "arrow.backward.circle.fill")
+            }
         }
     }
+}
 
-
-// .font(.callout) // Slightly smaller than .subheadline
 
 struct PropertyRow: View {
     let property: Property
@@ -129,7 +172,6 @@ struct PropertyRow: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.trailing, 20)
           
-            
             VStack(alignment: .leading) {
                 Text(property.monthlyRentalPrice, format: .currency(code: Locale.current.currency?.identifier ?? "CAN"))
                     .font(.title3)
@@ -172,6 +214,7 @@ struct PropertyRow: View {
         .padding(.vertical, 2)
     }
 }
+
 
 class SelectedPropertyWrapper: ObservableObject {
     @Published var selectedProperty: Property? = nil

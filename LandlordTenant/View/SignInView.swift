@@ -1,10 +1,3 @@
-//
-//  SignInView.swift
-//  LandlordTenandt
-//
-//  Created by Henrique Machitte on 02/03/25.
-//
-
 import SwiftUI
 
 struct SignInView: View {
@@ -13,55 +6,84 @@ struct SignInView: View {
     
     @Binding var rootScreen: RootView
     
-    @State private var email : String = ""
-    @State private var password : String = ""
-    
-    private let gridItems : [GridItem] = [GridItem(.flexible()), GridItem(.flexible())]
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var rememberMe: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
+            
+            Text("Welcome to Rent.ca")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.top, 50)
+            
             Form {
                 TextField("Enter Email", text: $email)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocapitalization(.none)
                 
                 SecureField("Enter Password", text: $password)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 
+                Toggle("Remember Me", isOn: $rememberMe)
             }
-            .autocorrectionDisabled()
-            .autocapitalization(.none)
+            .padding(.horizontal, 20)
+
+            // Sign In Button
+            Button(action: {
+                fireAuthHelper.signIn(email: email, password: password)
+            }) {
+                Text("Sign In")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, 20)
+            .alert("SignIn Success", isPresented: $fireAuthHelper.isSuccess) {
+                Button("Ok") {
+                    fireAuthHelper.isSuccess = false
+                    rootScreen = .PropertyList
+                }
+            }
             
-            LazyVGrid(columns: gridItems) {
-                Button(action: {
-                    fireAuthHelper.signIn(email: email, password: password)
-                }) {
-                    Text("Sign In")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .bold()
-                        .padding()
-                        .background(Color.blue)
-                }
-                .alert("SignIn Success", isPresented: $fireAuthHelper.isSuccess) {
-                    Button("Ok") {
-                        fireAuthHelper.isSuccess = false
-                        rootScreen = .PropertyList
-                    }
-                }
-                
-                Button(action: {
-                    rootScreen = .SignUp
-                }){
-                    Text("Sign Up")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .bold()
-                        .padding()
-                        .background(Color.blue)
-                }
+            // Sign Up Section
+            Text("Are you not registered?")
+                .foregroundColor(.gray)
+            
+            Button(action: {
+                rootScreen = .SignUp
+            }) {
+                Text("Sign Up")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
             }
+            .padding(.horizontal, 20)
+            
+            // Guest User Section
+            Text("Just browsing?")
+                .foregroundColor(.gray)
+            
+            Button(action: {
+                rootScreen = .PropertyList
+            }) {
+                Text("Guest User")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, 20)
+
             Spacer()
         }
+        .padding()
         .navigationTitle("Login")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -70,4 +92,3 @@ struct SignInView: View {
 #Preview {
     SignInView(rootScreen: .constant(.Login))
 }
-

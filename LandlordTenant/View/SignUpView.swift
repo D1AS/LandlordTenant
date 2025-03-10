@@ -1,10 +1,3 @@
-//
-//  SignUpView.swift
-//  LandlordTenandt
-//
-//  Created by Henrique Machitte on 02/03/25.
-//
-
 import SwiftUI
 
 struct SignUpView: View {
@@ -13,47 +6,103 @@ struct SignUpView: View {
     
     @Binding var rootScreen: RootView
     
-    @State private var email : String = ""
-    @State private var password : String = ""
-    @State private var confirmPassword : String = ""
-    
+    @State private var name: String = ""
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var confirmPassword: String = ""
+    @State private var address: String = ""
+    @State private var phoneNumber: String = ""
+    @State private var typeOfUser: String = "Tenant"
+    @State private var creditCard: String = ""
+
+    private let userTypes = ["Landlord", "Tenant"]
+
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
+            
+            // Back Button
+            HStack {
+                Button(action: {
+                    rootScreen = .Login
+                }) {
+                    Image(systemName: "arrow.left")
+                        .font(.title)
+                        .foregroundColor(.blue)
+                        .padding()
+                }
+                Spacer()
+            }
+            
+            Text("Create an Account")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.top, -30)
+            
             Form {
-                TextField("Enter Email", text: $email)
+                TextField("Full Name", text: $name)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                SecureField("Enter Password", text: $password)
+
+                TextField("Email", text: $email)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                
+                    .autocapitalization(.none)
+
+                SecureField("Password", text: $password)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
                 SecureField("Confirm Password", text: $confirmPassword)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-            .autocorrectionDisabled()
-            .autocapitalization(.none)
-            
-            Section {
-                Button(action: {
-                    fireAuthHelper.signUp(email: email, password: password)
-                }) {
-                    Text("Create Account")
-                }
-                .disabled( self.password != self.confirmPassword || self.email.isEmpty || self.password.isEmpty || self.confirmPassword.isEmpty)
-                .alert("SignUp Success", isPresented: $fireAuthHelper.isSuccess) {
-                    Button("Ok") {
-                        fireAuthHelper.isSuccess = false
-                        rootScreen = .PropertyList
+
+                TextField("Address", text: $address)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                TextField("Phone Number", text: $phoneNumber)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.phonePad)
+
+                Picker("User Type", selection: $typeOfUser) {
+                    ForEach(userTypes, id: \.self) { type in
+                        Text(type)
                     }
                 }
+                .pickerStyle(SegmentedPickerStyle())
+
+                TextField("Credit Card (Optional)", text: $creditCard)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+
+            } // Form End
+            .padding(.horizontal, 20)
+
+            // Sign Up Button
+            Button(action: signUp) {
+                Text("Create Account")
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .clipShape(Capsule())
             }
+            .padding(.horizontal, 20)
+            .disabled(password != confirmPassword || email.isEmpty || password.isEmpty || confirmPassword.isEmpty)
+            .alert("SignUp Success", isPresented: $fireAuthHelper.isSuccess) {
+                Button("Ok") {
+                    fireAuthHelper.isSuccess = false
+                    rootScreen = .PropertyList
+                }
+            }
+
+            Spacer()
         }
         .padding()
         .navigationTitle("Registration")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func signUp() {
+        let user = UserModel(name: name, email: email, address: address, phoneNumber: phoneNumber, typeOfUser: typeOfUser, creditCard: creditCard.isEmpty ? nil : creditCard)
+        fireAuthHelper.signUp(email: email, password: password, user: user)
     }
 }
 
 #Preview {
     SignUpView(rootScreen: .constant(.SignUp))
 }
-
