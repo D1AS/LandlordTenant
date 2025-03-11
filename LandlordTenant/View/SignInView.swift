@@ -10,6 +10,14 @@ struct SignInView: View {
     @State private var password: String = ""
     @State private var rememberMe: Bool = false
     
+    init(rootScreen: Binding<RootView>) {
+        self._rootScreen = rootScreen
+        let (isRemembered, savedEmail, savedPassword) = UserDefaultsHelper.getRememberMeState()
+        _rememberMe = State(initialValue: isRemembered)
+        _email = State(initialValue: savedEmail ?? "")
+        _password = State(initialValue: savedPassword ?? "")
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             
@@ -33,6 +41,7 @@ struct SignInView: View {
             // Sign In Button
             Button(action: {
                 fireAuthHelper.signIn(email: email, password: password)
+                UserDefaultsHelper.saveRememberMeState(rememberMe, email: email, password: password)
             }) {
                 Text("Sign In")
                     .frame(maxWidth: .infinity)
@@ -92,3 +101,4 @@ struct SignInView: View {
 #Preview {
     SignInView(rootScreen: .constant(.Login))
 }
+
