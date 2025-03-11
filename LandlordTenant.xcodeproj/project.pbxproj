@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,11 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7B8F08E62D74C1B10025AE7D /* LandlordTenant */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LandlordTenant;
-			sourceTree = "<group>";
-		};
+		7B8F08E62D74C1B10025AE7D /* LandlordTenant */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = LandlordTenant; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +97,7 @@
 				};
 			};
 			buildConfigurationList = 7B8F08DF2D74C1B10025AE7D /* Build configuration list for PBXProject "LandlordTenant" */;
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,7 +109,6 @@
 			packageReferences = (
 				7B8F09162D765ED80025AE7D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 7B8F08E52D74C1B10025AE7D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
