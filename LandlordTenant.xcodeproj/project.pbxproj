@@ -97,7 +97,7 @@
 				};
 			};
 			buildConfigurationList = 7B8F08DF2D74C1B10025AE7D /* Build configuration list for PBXProject "LandlordTenant" */;
-			compatibilityVersion = "Xcode 15.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
