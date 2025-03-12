@@ -84,4 +84,73 @@ class FireAuthHelper: ObservableObject {
             print("Error signing out: \(error.localizedDescription)")
         }
     }
+    
+    func addPropertyToUser(userID: String, propertyID: String) {
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.updateData([
+            "propertyIDs": FieldValue.arrayUnion([propertyID])
+        ]) { error in
+            if let error = error {
+                print("Failed to add property: \(error.localizedDescription)")
+            } else {
+                print("Property \(propertyID) added successfully to user \(userID)")
+            }
+        }
+    }
+    
+    func removePropertyFromUser(userID: String, propertyID: String) {
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.updateData([
+            "propertyIDs": FieldValue.arrayRemove([propertyID])
+        ]) { error in
+            if let error = error {
+                print("Failed to remove property: \(error.localizedDescription)")
+            } else {
+                print("Property \(propertyID) removed successfully from user \(userID)")
+            }
+        }
+    }
+    func toggleFavoriteProperty(propertyId: String) {
+        guard let user = user else {
+            print("No authenticated user")
+            return
+        }
+
+        let userRef = db.collection("users").document(user.id!)
+
+        userRef.getDocument { document, error in
+            if let error = error {
+                print("Error fetching user document: \(error.localizedDescription)")
+                return
+            }
+
+            if let document = document, document.exists {
+                var propertyIDs = document.data()?["propertyIDs"] as? [String] ?? []
+
+                if propertyIDs.contains(propertyId) {
+                    // Remove from favorites
+                    propertyIDs.removeAll { $0 == propertyId }
+                } else {
+                    // Add to favorites
+                    propertyIDs.append(propertyId)
+                }
+
+                // Update Firestore
+                userRef.updateData(["propertyIDs": propertyIDs]) { error in
+                    if let error = error {
+                        print("Error updating favorites: \(error.localizedDescription)")
+                    } else {
+                        print("Favorites updated successfully")
+                        self.user?.propertyIDs = propertyIDs // Update local user data
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 }

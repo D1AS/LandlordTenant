@@ -148,7 +148,9 @@ struct PropertyListView: View {
 
             // FAVORITES TAB
             NavigationStack {
-                Text("Favorites")
+                FavoriteView()
+                    .environmentObject(fireAuthHelper)
+               // Text("Favorites")
             }
             .tabItem {
                 Label("Favorites", systemImage: "star.fill")
@@ -206,6 +208,7 @@ struct PropertyListView: View {
 struct PropertyRow: View {
     let property: Property
     @State private var isFavorite: Bool = false
+    @EnvironmentObject var fireAuthHelper: FireAuthHelper
 
     var body: some View {
         HStack(alignment: .top) {
@@ -248,11 +251,7 @@ struct PropertyRow: View {
 
             Button {
                 isFavorite.toggle()
-                if isFavorite {
-                    print("Favorite!")
-                } else {
-                    print("Not favorite")
-                }
+                fireAuthHelper.toggleFavoriteProperty(propertyId: property.id ?? "")
             } label: {
                 Image(systemName: isFavorite ? "star.fill" : "star")
                     .font(.title2)
@@ -260,8 +259,14 @@ struct PropertyRow: View {
             }
         }
         .padding(.vertical, 2)
+        .onAppear {
+            if let user = fireAuthHelper.user {
+                isFavorite = user.propertyIDs.contains(property.id ?? "")
+            }
+        }
     }
 }
+
 
 class SelectedPropertyWrapper: ObservableObject {
     @Published var selectedProperty: Property? = nil

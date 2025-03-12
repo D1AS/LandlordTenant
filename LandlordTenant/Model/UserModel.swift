@@ -17,6 +17,8 @@ struct UserModel: Codable, Identifiable {
     var phoneNumber: String
     var typeOfUser: String // "Landlord" or "Tenant"
     var creditCard: String? // Optional
+    var propertyIDs: [String] // List of property IDs associated with the user
+    
 
     init(name: String, email: String, address: String, phoneNumber: String, typeOfUser: String, creditCard: String? = nil) {
         self.name = name
@@ -25,5 +27,6 @@ struct UserModel: Codable, Identifiable {
         self.phoneNumber = phoneNumber
         self.typeOfUser = typeOfUser
         self.creditCard = creditCard
+        self.propertyIDs = []
     }
 }

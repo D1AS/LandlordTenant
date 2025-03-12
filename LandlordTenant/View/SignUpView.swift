@@ -46,10 +46,10 @@ struct SignUpView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .autocapitalization(.none)
 
-                SecureField("Password", text: $password)
+                TextField("Password", text: $password)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                SecureField("Confirm Password", text: $confirmPassword)
+                TextField("Confirm Password", text: $confirmPassword)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
                 TextField("Address", text: $address)
