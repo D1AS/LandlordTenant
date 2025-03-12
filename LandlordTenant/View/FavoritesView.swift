@@ -13,6 +13,3 @@ struct FavoritesView: View {
     }
 }
 
-#Preview {
-    FavoritesView()
-}

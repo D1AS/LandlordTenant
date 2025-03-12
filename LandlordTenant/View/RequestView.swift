@@ -13,6 +13,3 @@ struct RequestView: View {
     }
 }
 
-#Preview {
-    RequestView()
-}
