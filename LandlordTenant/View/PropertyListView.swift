@@ -156,15 +156,7 @@ struct PropertyListView: View {
                 Label("Favorites", systemImage: "star.fill")
             }
 
-            // REQUESTS TAB
-            NavigationStack {
-                Text("Requests")
-            }
-            .tabItem {
-                Label("Requests", systemImage: "envelope.fill")
-            }
-
-            // PROFILE TAB
+          // PROFILE TAB
             NavigationStack {
                 ProfileView()
                     .environmentObject(fireAuthHelper)
@@ -208,6 +200,7 @@ struct PropertyListView: View {
 struct PropertyRow: View {
     let property: Property
     @State private var isFavorite: Bool = false
+    @State private var isRequest: Bool = false  // Track if the property is requested
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
 
     var body: some View {
@@ -249,23 +242,49 @@ struct PropertyRow: View {
 
             Spacer()
 
-            Button {
-                isFavorite.toggle()
-                fireAuthHelper.toggleFavoriteProperty(propertyId: property.id ?? "")
-            } label: {
-                Image(systemName: isFavorite ? "star.fill" : "star")
-                    .font(.title2)
-                    .foregroundColor(.yellow)
+            // Favorite Button
+            VStack {
+                Button {
+                    isFavorite.toggle()
+                    fireAuthHelper.toggleFavoriteProperty(propertyId: property.id ?? "")
+                } label: {
+                    Image(systemName: isFavorite ? "star.fill" : "star")
+                        .font(.title2)
+                        .foregroundColor(.yellow)
+                }
+
+                // Request Button (acts as a toggle)
+                Button {
+                    isRequest.toggle()  // Toggle the request state
+                    if isRequest {
+                        fireAuthHelper.requestProperty(propertyId: property.id ?? "")  // Add the request logic
+                        print("Requested property \(property.id ?? "")")
+                    } else {
+                        fireAuthHelper.requestProperty(propertyId: property.id ?? "")  // Add unrequest logic
+                        print("Unrequested property \(property.id ?? "")")
+                    }
+                } label: {
+                    Text(isRequest ? "Unrequest" : "Request")  // Toggle the label
+                        .font(.caption2)
+                        .foregroundColor(isRequest ? .red : .blue)  // Change color based on state
+                        .padding(8)
+                        .background(RoundedRectangle(cornerRadius: 5).stroke(isRequest ? Color.red : Color.blue))
+                }
+                .padding(.top, 8)
             }
         }
         .padding(.vertical, 2)
         .onAppear {
             if let user = fireAuthHelper.user {
                 isFavorite = user.propertyIDs.contains(property.id ?? "")
+                // Optionally initialize the request state based on the user data
+                isRequest = user.requestpropertyIDs.contains(property.id ?? "")
             }
         }
     }
 }
+
+
 
 
 class SelectedPropertyWrapper: ObservableObject {
