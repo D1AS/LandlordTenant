@@ -32,6 +32,3 @@ struct Collapsible<Content: View>: View {
         .padding(.bottom, 5)
     }
 }
-//add by Wayne
-//add by wayne from the Browsers
-//add by wayne from the xcode
