@@ -98,7 +98,3 @@ struct SignInView: View {
     }
 }
 
-#Preview {
-    SignInView(rootScreen: .constant(.Login))
-}
-

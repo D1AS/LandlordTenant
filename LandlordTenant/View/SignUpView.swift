@@ -103,6 +103,3 @@ struct SignUpView: View {
     }
 }
 
-#Preview {
-    SignUpView(rootScreen: .constant(.SignUp))
-}
