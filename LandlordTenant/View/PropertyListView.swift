@@ -10,16 +10,24 @@ import SwiftUI
 struct PropertyListView: View {
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
     @EnvironmentObject var fireDBHelper: FireDBHelper
-    
+
     @State private var searchText = ""
     @State private var showDetailView = false
     @StateObject private var selectedPropertyWrapper = SelectedPropertyWrapper()
     @State private var showingCreatePropertyView = false
+    @State private var filterByLandLord = false
+    @State private var isLandlord = false
     
+    @State private var landlordId = ""
+
     @Binding var rootScreen: RootView
-    
+
     var filteredProperties: [Property] {
-        if searchText.isEmpty {
+        if filterByLandLord {
+            return fireDBHelper.propertyList.filter { property in
+                property.landlord == landlordId
+            }
+        } else if searchText.isEmpty {
             return fireDBHelper.propertyList
         } else {
             return fireDBHelper.propertyList.filter { property in
@@ -27,7 +35,7 @@ struct PropertyListView: View {
             }
         }
     }
-    
+
     var body: some View {
         TabView {
             // PROPERTIES TAB
@@ -86,11 +94,32 @@ struct PropertyListView: View {
                         }
                     }
 
-                    // Floating Action Button (FAB) to add new property
+                    // Floating Action Buttons (FABs)
                     VStack {
                         Spacer()
                         HStack {
+                            if isLandlord {
+                                Button(action: {
+                                    filterByLandLord.toggle()
+                                    searchText = ""
+                                    print("Filter by Land Lord!")
+
+                                }) {
+                                    Image(systemName: "line.3.horizontal.decrease")
+                                        .resizable()
+                                        .frame(width: 24, height: 24)
+                                        .padding()
+                                        //.background(Color.gray)
+                                        .background(filterByLandLord ? Color.orange : Color.gray)
+                                        .foregroundColor(.white)
+                                        .clipShape(Circle())
+                                        .shadow(radius: 4)
+                                }
+                                .padding()
+                            }
+
                             Spacer()
+
                             Button(action: {
                                 showingCreatePropertyView = true
                             }) {
@@ -136,7 +165,7 @@ struct PropertyListView: View {
             // PROFILE TAB
             NavigationStack {
                 ProfileView()
-                                    .environmentObject(fireAuthHelper)
+                    .environmentObject(fireAuthHelper)
             }
             .tabItem {
                 Label("Profile", systemImage: "person.crop.circle.fill")
@@ -151,9 +180,28 @@ struct PropertyListView: View {
                 Label("Logout", systemImage: "arrow.backward.circle.fill")
             }
         }
+        
+        .onAppear {
+            if let user = fireAuthHelper.user {
+                print("Current user: \(user.name), typeOfUser: \(user.typeOfUser)")
+
+                if user.typeOfUser.lowercased() == "landlord" {
+                    isLandlord = true
+                    landlordId = user.id!
+                } else {
+                    isLandlord = false
+                    landlordId = ""
+                }
+
+
+            } else {
+                print("No user logged in")
+                isLandlord = false // Ensure it's set to false if there's no user
+            }
+        }
+        
     }
 }
-
 
 struct PropertyRow: View {
     let property: Property
@@ -171,7 +219,7 @@ struct PropertyRow: View {
             .frame(width: 100, height: 100)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.trailing, 20)
-          
+
             VStack(alignment: .leading) {
                 Text(property.monthlyRentalPrice, format: .currency(code: Locale.current.currency?.identifier ?? "CAN"))
                     .font(.title3)
@@ -214,7 +262,6 @@ struct PropertyRow: View {
         .padding(.vertical, 2)
     }
 }
-
 
 class SelectedPropertyWrapper: ObservableObject {
     @Published var selectedProperty: Property? = nil
