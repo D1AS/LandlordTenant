@@ -33,3 +33,4 @@ struct Collapsible<Content: View>: View {
     }
 }
 //add by Wayne
+//add by wayne from the Browsers
