@@ -1,13 +1,13 @@
 //
-//  PropertyListView.swift
+//  PropertyListTenantView.swift
 //  LandlordTenant
 //
-//  Created by Henrique Machitte on 02/03/25.
+//  Created by Juan Wang on 2025/3/12.
 //
 
 import SwiftUI
 
-struct PropertyListView: View {
+struct PropertyListTenantView: View {
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
     @EnvironmentObject var fireDBHelper: FireDBHelper
 
@@ -82,7 +82,7 @@ struct PropertyListView: View {
                                             print("Presenting DetailView for: \(currentProperty.id ?? "no id")")
                                         }
                                 } label: {
-                                    PropertyRow(property: currentProperty)
+                                    PropertyRowTenant(property: currentProperty)
                                         .buttonStyle(.plain)
                                 }
                             }
@@ -120,19 +120,6 @@ struct PropertyListView: View {
 
                             Spacer()
 
-                            Button(action: {
-                                showingCreatePropertyView = true
-                            }) {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 4)
-                            }
-                            .padding()
                         }
                     }
                 }
@@ -197,7 +184,7 @@ struct PropertyListView: View {
     }
 }
 
-struct PropertyRow: View {
+struct PropertyRowTenant: View {
     let property: Property
     @State private var isFavorite: Bool = false
     @State private var isRequest: Bool = false  // Track if the property is requested
@@ -256,13 +243,8 @@ struct PropertyRow: View {
                 // Request Button (acts as a toggle)
                 Button {
                     isRequest.toggle()  // Toggle the request state
-                    if isRequest {
-                        fireAuthHelper.requestProperty(propertyId: property.id ?? "")  // Add the request logic
-                        print("Requested property \(property.id ?? "")")
-                    } else {
-                        fireAuthHelper.requestProperty(propertyId: property.id ?? "")  // Add unrequest logic
-                        print("Unrequested property \(property.id ?? "")")
-                    }
+                        fireAuthHelper.toggleRequestProperty(propertyId: property.id ?? "")  // Add the request logic
+
                 } label: {
                     Text(isRequest ? "Unrequest" : "Request")  // Toggle the label
                         .font(.caption2)
@@ -282,11 +264,4 @@ struct PropertyRow: View {
             }
         }
     }
-}
-
-
-
-
-class SelectedPropertyWrapper: ObservableObject {
-    @Published var selectedProperty: Property? = nil
 }

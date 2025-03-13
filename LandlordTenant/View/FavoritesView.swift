@@ -25,7 +25,7 @@ struct FavoriteView: View {
                         .foregroundColor(.gray)
                 } else {
                     List(favoriteProperties) { property in
-                        PropertyRow(property: property)
+                        PropertyRowTenant(property: property)
                     }
                     .listStyle(PlainListStyle())
                 }

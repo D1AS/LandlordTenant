@@ -39,9 +39,35 @@ struct SignInView: View {
             .padding(.horizontal, 20)
 
             // Sign In Button
+//            Button(action: {
+//                fireAuthHelper.signIn(email: email, password: password)
+//                UserDefaultsHelper.saveRememberMeState(rememberMe, email: email, password: password)
+//            }) {
+//                Text("Sign In")
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.blue)
+//                    .foregroundColor(.white)
+//                    .clipShape(Capsule())
+//            }
+//            .padding(.horizontal, 20)
+//            .alert("SignIn Success", isPresented: $fireAuthHelper.isSuccess) {
+//                Button("Ok") {
+//                    fireAuthHelper.isSuccess = false
+//                    rootScreen = .PropertyListTenant
+//                }
+//            }
             Button(action: {
-                fireAuthHelper.signIn(email: email, password: password)
-                UserDefaultsHelper.saveRememberMeState(rememberMe, email: email, password: password)
+                fireAuthHelper.signIn(email: email, password: password) { success in
+                    if success {
+                        fireAuthHelper.fetchUserType(email: email) { userType in
+                            if let userType = userType {
+                                rootScreen = (userType == "Landlord") ? .PropertyListLandlord : .PropertyListTenant
+                            }
+                        }
+                        UserDefaultsHelper.saveRememberMeState(rememberMe, email: email, password: password)
+                    }
+                }
             }) {
                 Text("Sign In")
                     .frame(maxWidth: .infinity)
@@ -50,13 +76,7 @@ struct SignInView: View {
                     .foregroundColor(.white)
                     .clipShape(Capsule())
             }
-            .padding(.horizontal, 20)
-            .alert("SignIn Success", isPresented: $fireAuthHelper.isSuccess) {
-                Button("Ok") {
-                    fireAuthHelper.isSuccess = false
-                    rootScreen = .PropertyList
-                }
-            }
+
             
             // Sign Up Section
             Text("Are you not registered?")
@@ -79,7 +99,7 @@ struct SignInView: View {
                 .foregroundColor(.gray)
             
             Button(action: {
-                rootScreen = .PropertyList
+                rootScreen = .PropertyListGuest
             }) {
                 Text("Guest User")
                     .frame(maxWidth: .infinity)

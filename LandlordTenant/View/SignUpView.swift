@@ -86,7 +86,8 @@ struct SignUpView: View {
             .alert("SignUp Success", isPresented: $fireAuthHelper.isSuccess) {
                 Button("Ok") {
                     fireAuthHelper.isSuccess = false
-                    rootScreen = .PropertyList
+                    rootScreen = (typeOfUser == "Landlord") ? .PropertyListLandlord : .PropertyListTenant
+                   // rootScreen = .PropertyListTenant
                 }
             }
 

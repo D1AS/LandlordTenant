@@ -9,11 +9,17 @@ import SwiftUI
 
 struct ContentView: View {
 
+//    @State private var root: RootView = .Login
+//    @StateObject var userSessionManager = UserSessionManager()
+//    
+//    var fireAuthHelper = FireAuthHelper.getInstance()
+//    var fireDBHelper = FireDBHelper.getInstance()
+//    
     @State private var root: RootView = .Login
-    @StateObject var userSessionManager = UserSessionManager()
-    
-    var fireAuthHelper = FireAuthHelper.getInstance()
-    var fireDBHelper = FireDBHelper.getInstance()
+      @StateObject private var fireAuthHelper = FireAuthHelper.getInstance()
+      @StateObject private var fireDBHelper = FireDBHelper.getInstance()
+      @ObservedObject var userSessionManager = UserSessionManager()
+
 
 
     var body: some View {
@@ -29,20 +35,38 @@ struct ContentView: View {
                 SignUpView(rootScreen: self.$root)
                     .environmentObject(self.fireAuthHelper)
                     .environmentObject(userSessionManager)
-            case .PropertyList:
-                PropertyListView(rootScreen: self.$root)
+//            case .PropertyList:
+//                PropertyListView(rootScreen: self.$root)
+//                    .environmentObject(self.fireAuthHelper)
+//                    .environmentObject(self.fireDBHelper)
+//                    .environmentObject(userSessionManager)
+                
+            case .PropertyListGuest:
+                PropertyListGuestView(rootScreen: self.$root)
                     .environmentObject(self.fireAuthHelper)
                     .environmentObject(self.fireDBHelper)
                     .environmentObject(userSessionManager)
+            case .PropertyListLandlord:
+                PropertyListLandlordView(rootScreen: self.$root)
+                    .environmentObject(self.fireAuthHelper)
+                    .environmentObject(self.fireDBHelper)
+                    .environmentObject(userSessionManager)
+            case .PropertyListTenant:
+                PropertyListTenantView(rootScreen: self.$root)
+                    .environmentObject(self.fireAuthHelper)
+                    .environmentObject(self.fireDBHelper)
+                    .environmentObject(userSessionManager)
+                
+                
+                
+                
             }
+        
         }
     }
 }
 
 enum RootView {
-    case Login, SignUp, PropertyList
+    case Login, SignUp,PropertyListGuest,PropertyListLandlord,PropertyListTenant
 }
 
-//#Preview {
-//    ContentView()
-//}
