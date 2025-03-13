@@ -12,15 +12,15 @@ struct Collapsible<Content: View>: View {
             }) {
                 HStack {
                     self.label()
-                        .font(.headline) // Use headline font
-                        .fontWeight(.bold) // Make it bold
+                        .font(.headline)
+                        .fontWeight(.bold)
                     Spacer()
                     Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
-                        .foregroundColor(.accentColor) // Use the accent color
+                        .foregroundColor(.accentColor)
                 }
                 .padding(.bottom, 1)
-                .background(Color.white.opacity(0.01)) // Make entire row tappable
-                .contentShape(Rectangle()) // Make entire row tappable
+                .background(Color.white.opacity(0.01))
+                .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
 
@@ -32,5 +32,3 @@ struct Collapsible<Content: View>: View {
         .padding(.bottom, 5)
     }
 }
-
-//add by wayne

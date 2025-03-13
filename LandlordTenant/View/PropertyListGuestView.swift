@@ -77,6 +77,7 @@ struct PropertyListGuestView: View {
                             ForEach(filteredProperties.enumerated().map({ $0 }), id: \.element.id) { _, currentProperty in
                                 NavigationLink {
                                     PropertyDetailsView(property: currentProperty, isNew: false)
+                                        .environmentObject(fireAuthHelper)
                                         .environmentObject(fireDBHelper)
                                         .environmentObject(selectedPropertyWrapper)
                                         .onAppear {

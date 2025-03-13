@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CreatePropertyView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var fireAuthHelper: FireAuthHelper
     @EnvironmentObject var fireDBHelper: FireDBHelper
 
     @State private var desc: String = ""
@@ -26,6 +27,9 @@ struct CreatePropertyView: View {
     @State private var contactEmail: String = ""
 
     @State private var sqftString: String = ""
+    
+    @State private var isLandlord = false
+    @State private var landlordId = ""
 
     var body: some View {
         NavigationView {
@@ -61,24 +65,24 @@ struct CreatePropertyView: View {
                         }
                 }
 
-                Section(header: Text("Contact Information")) {
-                    FloatingLabelTextField(placeholder: "Landlord", text: $landlord)
-                    FloatingLabelTextField(placeholder: "Contact Phone", text: $contactPhone)
-                        .keyboardType(.phonePad)
-                    FloatingLabelTextField(placeholder: "Contact Email", text: $contactEmail)
-                        .keyboardType(.emailAddress)
+//                Section(header: Text("Contact Information")) {
+//                    FloatingLabelTextField(placeholder: "Landlord", text: $landlord)
+//                    FloatingLabelTextField(placeholder: "Contact Phone", text: $contactPhone)
+//                        .keyboardType(.phonePad)
+//                    FloatingLabelTextField(placeholder: "Contact Email", text: $contactEmail)
+//                        .keyboardType(.emailAddress)
+//
+//                }
 
-                }
-
-                Section(header: Text("Location")) {
-                    TextField("Latitude", value: $lat, format: .number)
-                        .keyboardType(.decimalPad)
-                    TextField("Longitude", value: $lng, format: .number)
-                        .keyboardType(.decimalPad)
-                }
+//                Section(header: Text("Location")) {
+//                    TextField("Latitude", value: $lat, format: .number)
+//                        .keyboardType(.decimalPad)
+//                    TextField("Longitude", value: $lng, format: .number)
+//                        .keyboardType(.decimalPad)
+//                }
 
                 Section(header: Text("Listing Details")) {
-                    DatePicker("Listing Date", selection: $listingDate, displayedComponents: .date)
+//                    DatePicker("Listing Date", selection: $listingDate, displayedComponents: .date)
                     FloatingLabelTextField(placeholder: "Image URL", text: $imageUrl)
                 }
 
@@ -95,7 +99,7 @@ struct CreatePropertyView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        let newProperty = Property(desc: desc, address: address, city: city, lat: lat, lng: lng, propertyType: propertyType, imageUrl: URL(string: imageUrl)!, numberOfBedrooms: numberOfBedrooms, numberOfBathrooms: numberOfBathrooms, buildingAmenities: Array(buildingAmenities), unitFeatures: Array(unitFeatures), sqft: sqft, monthlyRentalPrice: monthlyRentalPrice, isAvailable: isAvailable, landlord: landlord, listingDate: listingDate, availabilityDate: availabilityDate)
+                        let newProperty = Property(desc: desc, address: address, city: city, lat: lat, lng: lng, propertyType: propertyType, imageUrl: URL(string: imageUrl)!, numberOfBedrooms: numberOfBedrooms, numberOfBathrooms: numberOfBathrooms, buildingAmenities: Array(buildingAmenities), unitFeatures: Array(unitFeatures), sqft: sqft, monthlyRentalPrice: monthlyRentalPrice, isAvailable: isAvailable, landlord: landlordId, listingDate: listingDate, availabilityDate: availabilityDate)
 
                         fireDBHelper.insertListing(newProperty: newProperty)
 
@@ -105,6 +109,30 @@ struct CreatePropertyView: View {
                 }
             }
         }
+    
+    
+        .onAppear {
+            if let user = fireAuthHelper.user {
+                print("Current user: \(user.name), typeOfUser: \(user.typeOfUser)")
+
+                if user.typeOfUser.lowercased() == "landlord" {
+                    isLandlord = true
+                    landlordId = user.id!
+                } else {
+                    isLandlord = false
+                    landlordId = ""
+                }
+
+
+            } else {
+                print("No user logged in")
+                isLandlord = false // Ensure it's set to false if there's no user
+            }
+        }
+    
+    
+    
+    
     }
 }
 
