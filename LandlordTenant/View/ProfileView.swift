@@ -127,25 +127,24 @@ struct ProfileView: View {
 
     // not working yet
     private func saveChanges() {
-//        guard let user = fireAuthHelper.user else { return }
-//        
-//        if !password.isEmpty && password != confirmPassword {
-//            print("Passwords do not match!")
-//            return
-//        }
-//
-//        let updatedUser = UserModel(
-//            id: user.id,
-//            name: name,
-//            email: email,
-//            address: address,
-//            phoneNumber: phoneNumber,
-//            typeOfUser: userType,
-//            creditCard: creditCard.isEmpty ? nil : creditCard
-//        )
-//
-//        fireAuthHelper.updateUser(updatedUser, newPassword: password.isEmpty ? nil : password)
-//        isModified = false
+        guard let user = fireAuthHelper.user else { return }
+        
+        if !password.isEmpty && password != confirmPassword {
+            print("Passwords do not match!")
+            return
+        }
+
+        let updatedUser = UserModel(
+            name: name,
+            email: email,
+            address: address,
+            phoneNumber: phoneNumber,
+            typeOfUser: userType,
+            creditCard: creditCard.isEmpty ? nil : creditCard
+        )
+
+        fireAuthHelper.updateUser(updatedUser, newPassword: password.isEmpty ? nil : password)
+        isModified = false
     }
 }
 
