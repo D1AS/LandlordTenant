@@ -38,25 +38,7 @@ struct SignInView: View {
             }
             .padding(.horizontal, 20)
 
-            // Sign In Button
-//            Button(action: {
-//                fireAuthHelper.signIn(email: email, password: password)
-//                UserDefaultsHelper.saveRememberMeState(rememberMe, email: email, password: password)
-//            }) {
-//                Text("Sign In")
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.blue)
-//                    .foregroundColor(.white)
-//                    .clipShape(Capsule())
-//            }
-//            .padding(.horizontal, 20)
-//            .alert("SignIn Success", isPresented: $fireAuthHelper.isSuccess) {
-//                Button("Ok") {
-//                    fireAuthHelper.isSuccess = false
-//                    rootScreen = .PropertyListTenant
-//                }
-//            }
+            
             Button(action: {
                 fireAuthHelper.signIn(email: email, password: password) { success in
                     if success {

@@ -8,13 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-
-//    @State private var root: RootView = .Login
-//    @StateObject var userSessionManager = UserSessionManager()
-//    
-//    var fireAuthHelper = FireAuthHelper.getInstance()
-//    var fireDBHelper = FireDBHelper.getInstance()
-//    
+  
     @State private var root: RootView = .Login
       @StateObject private var fireAuthHelper = FireAuthHelper.getInstance()
       @StateObject private var fireDBHelper = FireDBHelper.getInstance()
@@ -35,11 +29,6 @@ struct ContentView: View {
                 SignUpView(rootScreen: self.$root)
                     .environmentObject(self.fireAuthHelper)
                     .environmentObject(userSessionManager)
-//            case .PropertyList:
-//                PropertyListView(rootScreen: self.$root)
-//                    .environmentObject(self.fireAuthHelper)
-//                    .environmentObject(self.fireDBHelper)
-//                    .environmentObject(userSessionManager)
                 
             case .PropertyListGuest:
                 PropertyListGuestView(rootScreen: self.$root)

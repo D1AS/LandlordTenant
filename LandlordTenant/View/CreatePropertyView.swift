@@ -65,21 +65,6 @@ struct CreatePropertyView: View {
                         }
                 }
 
-//                Section(header: Text("Contact Information")) {
-//                    FloatingLabelTextField(placeholder: "Landlord", text: $landlord)
-//                    FloatingLabelTextField(placeholder: "Contact Phone", text: $contactPhone)
-//                        .keyboardType(.phonePad)
-//                    FloatingLabelTextField(placeholder: "Contact Email", text: $contactEmail)
-//                        .keyboardType(.emailAddress)
-//
-//                }
-
-//                Section(header: Text("Location")) {
-//                    TextField("Latitude", value: $lat, format: .number)
-//                        .keyboardType(.decimalPad)
-//                    TextField("Longitude", value: $lng, format: .number)
-//                        .keyboardType(.decimalPad)
-//                }
 
                 Section(header: Text("Listing Details")) {
 //                    DatePicker("Listing Date", selection: $listingDate, displayedComponents: .date)

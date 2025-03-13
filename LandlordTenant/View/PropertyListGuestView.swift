@@ -1,11 +1,3 @@
-//
-//  PropertyListGuestView.swift
-//  LandlordTenant
-//
-//  Created by Juan Wang on 2025/3/12.
-//
-
-
 import SwiftUI
 
 struct PropertyListGuestView: View {
@@ -121,8 +113,6 @@ struct PropertyListGuestView: View {
                             }
 
                             Spacer()
-
-
                         }
                     }
                 }
@@ -136,9 +126,15 @@ struct PropertyListGuestView: View {
                 Label("Properties", systemImage: "building.2.fill")
             }
 
-
+            // LOGOUT TAB
+            Button("Logout") {
+                fireAuthHelper.signOut()
+                rootScreen = .Login
+            }
+            .tabItem {
+                Label("Logout", systemImage: "arrow.backward.circle.fill")
+            }
         }
-        
         .onAppear {
             if let user = fireAuthHelper.user {
                 print("Current user: \(user.name), typeOfUser: \(user.typeOfUser)")
@@ -150,17 +146,13 @@ struct PropertyListGuestView: View {
                     isLandlord = false
                     landlordId = ""
                 }
-
-
             } else {
                 print("No user logged in")
                 isLandlord = false // Ensure it's set to false if there's no user
             }
         }
-        
     }
 }
-
 
 struct PropertyRowGuest: View {
     let property: Property
@@ -206,7 +198,6 @@ struct PropertyRowGuest: View {
             }
 
             Spacer()
-
         }
         .padding(.vertical, 2)
         .onAppear {
@@ -222,5 +213,3 @@ struct PropertyRowGuest: View {
 class SelectedPropertyWrapper: ObservableObject {
     @Published var selectedProperty: Property? = nil
 }
-
-

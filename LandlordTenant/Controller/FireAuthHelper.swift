@@ -227,7 +227,7 @@ class FireAuthHelper: ObservableObject {
                 let userName = document.data()["name"] as? String ?? "Unknown"
                 let requestPropertyIds = document.data()["requestpropertyIDs"] as? [String] ?? []
 
-                namesMap[userId] = userName  // ✅ Store userId -> userName mapping
+                namesMap[userId] = userName  //Store userId -> userName mapping
 
                 for propertyId in requestPropertyIds {
                     requestMap[propertyId, default: []].append(userId)  // Reverse mapping
@@ -236,7 +236,7 @@ class FireAuthHelper: ObservableObject {
 
             DispatchQueue.main.async {
                 self.propertyRequestMap = requestMap
-                self.userNames = namesMap  // ✅ Update state with user names
+                self.userNames = namesMap  //Update state with user names
             }
         }
     }

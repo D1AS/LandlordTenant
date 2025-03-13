@@ -128,7 +128,7 @@ struct ProfileView: View {
         }
 
         let updatedUser = UserModel(
-            id: user.id, // Certifique-se de que o ID do usuário está definido
+            id: user.id, 
             name: name,
             email: email,
             address: address,

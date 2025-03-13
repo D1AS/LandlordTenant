@@ -106,10 +106,8 @@ class FireDBHelper : ObservableObject {
 
                         switch docChange.type {
                         case .added:
-//                            print("Movie Added")
                             self.propertyList.append(property)
                         case .modified:
-//                            print("Movie Updated: \(docChange.document.documentID)")
                             if(matchedIndex != nil) {
                                 self.propertyList[matchedIndex!] = property
                             }
