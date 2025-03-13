@@ -35,15 +35,50 @@ class FireDBHelper : ObservableObject {
         return shared!
     }
 
+//    func insertListing(newProperty: Property) {
+//        do {
+//            try db
+//                .collection(COLLECTION_PROPERTIES)
+//                .addDocument(from: newProperty)
+//        } catch let err as NSError {
+//            print("Unable to add listing \(err)")
+//        }
+//    }
+    
     func insertListing(newProperty: Property) {
+        let propertyRef = db.collection(COLLECTION_PROPERTIES).document() // Generate a new document reference with an ID
+        var propertyWithID = newProperty
+        propertyWithID.id = propertyRef.documentID // Assign the generated document ID to the property
+
         do {
-            try db
-                .collection(COLLECTION_PROPERTIES)
-                .addDocument(from: newProperty)
-        } catch let err as NSError {
-            print("Unable to add listing \(err)")
+            try propertyRef.setData(from: propertyWithID) { error in
+                if let error = error {
+                    print("Unable to add listing: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Successfully added the property, now update the user's propertyIds field
+                self.updateUserPropertyIds(userId: newProperty.landlord, propertyId: propertyRef.documentID)
+            }
+        } catch {
+            print("Error writing property: \(error)")
         }
     }
+
+    func updateUserPropertyIds(userId: String, propertyId: String) {
+        let userRef = db.collection("users").document(userId)
+
+        userRef.updateData([
+            "propertyIds": FieldValue.arrayUnion([propertyId]) // Append the property ID to the array
+        ]) { error in
+            if let error = error {
+                print("Failed to update user properties: \(error.localizedDescription)")
+            } else {
+                print("Successfully added property ID to user.")
+            }
+        }
+    }
+
 
     func getListing(propertyId: String) -> Property? {
         if let foundProperty = propertyList.first(where: { $0.id == propertyId }) {
