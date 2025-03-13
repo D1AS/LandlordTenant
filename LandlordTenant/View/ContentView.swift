@@ -56,10 +56,7 @@ struct ContentView: View {
                     .environmentObject(self.fireAuthHelper)
                     .environmentObject(self.fireDBHelper)
                     .environmentObject(userSessionManager)
-                
-                
-                
-                
+
             }
         
         }

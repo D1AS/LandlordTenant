@@ -50,37 +50,29 @@ class FireAuthHelper: ObservableObject {
         }
     }
 
-//    func signIn(email: String, password: String) {
-//        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-//            if let error = error {
-//                print("Signin failed: \(error.localizedDescription)")
-//                return
-//            }
-//
-//            guard let uid = result?.user.uid else { return }
-//
-//            self.db.collection("users").document(uid).getDocument { snapshot, error in
-//                if let snapshot = snapshot, snapshot.exists {
-//                    do {
-//                        self.user = try snapshot.data(as: UserModel.self)
-//                        self.isSuccess = true
-//                        print("User signed in: \(self.user?.name ?? "Unknown")")
-//                    } catch {
-//                        print("Error fetching user data: \(error.localizedDescription)")
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
-    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+    func signIn(email: String, password: String,completion: @escaping (Bool) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
-                print("Sign-in error: \(error.localizedDescription)")
+                print("Signin failed: \(error.localizedDescription)")
                 completion(false)
                 return
             }
+            
             completion(true)
+
+            guard let uid = result?.user.uid else { return }
+
+            self.db.collection("users").document(uid).getDocument { snapshot, error in
+                if let snapshot = snapshot, snapshot.exists {
+                    do {
+                        self.user = try snapshot.data(as: UserModel.self)
+                        self.isSuccess = true
+                        print("User signed in: \(self.user?.name ?? "Unknown")")
+                    } catch {
+                        print("Error fetching user data: \(error.localizedDescription)")
+                    }
+                }
+            }
         }
     }
 
