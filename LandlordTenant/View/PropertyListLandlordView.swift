@@ -147,14 +147,24 @@ struct PropertyListLandlordView: View {
                 Label("Properties", systemImage: "building.2.fill")
             }
 
-            // FAVORITES TAB
+            // MyPropertyies TAB
             NavigationStack {
-                FavoriteView()
+                MyPropertyView()
                     .environmentObject(fireAuthHelper)
                // Text("Favorites")
             }
             .tabItem {
                 Label("MyProperties", systemImage: "building.2.crop.circle")
+            }
+            
+            // Request TAB
+            NavigationStack {
+                RequestView()
+                    .environmentObject(fireAuthHelper)
+               // Text("Favorites")
+            }
+            .tabItem {
+                Label("Request", systemImage: "message")
             }
 
           // PROFILE TAB
