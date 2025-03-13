@@ -181,6 +181,67 @@ class FireAuthHelper: ObservableObject {
             }
         }
     }
+    
+    @Published var propertyRequestMap: [String: [String]] = [:]
+    @Published var userNames: [String: String] = [:]  // Stores userId -> userName
+
+    func fetchPropertyRequestMap() {
+        db.collection("users").getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching users: \(error.localizedDescription)")
+                return
+            }
+
+            var requestMap: [String: [String]] = [:]
+            var namesMap: [String: String] = [:]
+
+            for document in snapshot?.documents ?? [] {
+                let userId = document.documentID
+                let userName = document.data()["name"] as? String ?? "Unknown"
+                let requestPropertyIds = document.data()["requestpropertyIDs"] as? [String] ?? []
+
+                namesMap[userId] = userName  // ✅ Store userId -> userName mapping
+
+                for propertyId in requestPropertyIds {
+                    requestMap[propertyId, default: []].append(userId)  // Reverse mapping
+                }
+            }
+
+            DispatchQueue.main.async {
+                self.propertyRequestMap = requestMap
+                self.userNames = namesMap  // ✅ Update state with user names
+            }
+        }
+    }
+
+    @Published var propertyAddresses: [String: String] = [:]  // Stores propertyId -> address mapping
+
+  
+    func fetchPropertyAddresses() {
+        db.collection("Properties").getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching properties: \(error.localizedDescription)")
+                return
+            }
+
+            var addressesMap: [String: String] = [:]
+
+            for document in snapshot?.documents ?? [] {
+                let propertyId = document.documentID  // The document ID is the propertyId
+                let propertyAddress = document.data()["address"] as? String ?? "Unknown Address"
+                addressesMap[propertyId] = propertyAddress  // Store propertyId -> address mapping
+            }
+
+            DispatchQueue.main.async {
+                self.propertyAddresses = addressesMap  // Update the propertyAddresses dictionary
+            }
+        }
+    }
+
+
+
+
+
 
 
 
