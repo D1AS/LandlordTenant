@@ -37,6 +37,7 @@ struct MyPropertyView: View {
         }
     }
     
+
     private func fetchFavoriteProperties() {
         guard let user = fireAuthHelper.user else {
             errorMessage = "No user logged in"
