@@ -69,7 +69,7 @@ class FireDBHelper : ObservableObject {
         let userRef = db.collection("users").document(userId)
 
         userRef.updateData([
-            "propertyIds": FieldValue.arrayUnion([propertyId]) // Append the property ID to the array
+            "propertyIDs": FieldValue.arrayUnion([propertyId]) // Append the property ID to the array
         ]) { error in
             if let error = error {
                 print("Failed to update user properties: \(error.localizedDescription)")
