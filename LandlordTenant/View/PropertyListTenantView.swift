@@ -147,7 +147,7 @@ struct PropertyListTenantView: View {
           // PROFILE TAB
             NavigationStack {
                 ProfileView()
-                    .environmentObject(fireAuthHelper)
+                    .environmentObject(FireAuthHelper.getInstance())
             }
             .tabItem {
                 Label("Profile", systemImage: "person.crop.circle.fill")

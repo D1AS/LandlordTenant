@@ -3,7 +3,6 @@ import SwiftUI
 struct ProfileView: View {
     
     @EnvironmentObject var fireAuthHelper: FireAuthHelper
-    @Environment(\.dismiss) private var dismiss
     
     @State private var name: String
     @State private var email: String
@@ -14,11 +13,12 @@ struct ProfileView: View {
     @State private var confirmPassword: String = ""
     
     @State private var isModified = false // check for modification
+    @State private var showSuccessMessage = false // show success alert
     
     private let userType: String
 
     init() {
-        let user = FireAuthHelper.getInstance().user ?? UserModel(name: "", email: "", address: "", phoneNumber: "", typeOfUser: "", creditCard: nil)
+        let user = FireAuthHelper.getInstance().user ?? UserModel(id: "", name: "", email: "", address: "", phoneNumber: "", typeOfUser: "", creditCard: nil)
         
         _name = State(initialValue: user.name)
         _email = State(initialValue: user.email)
@@ -30,19 +30,6 @@ struct ProfileView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            
-            // Back Button
-            HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "arrow.left")
-                        .font(.title)
-                        .foregroundColor(.blue)
-                        .padding()
-                }
-                Spacer()
-            }
             
             Text("User Profile")
                 .font(.largeTitle)
@@ -89,8 +76,7 @@ struct ProfileView: View {
                 SecureField("Confirm Password", text: $confirmPassword)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .onChange(of: confirmPassword) { _ in checkForChanges() }
-
-            } // Form End
+            }
             .padding(.horizontal, 20)
 
             // Save Button
@@ -104,6 +90,11 @@ struct ProfileView: View {
             }
             .padding(.horizontal, 20)
             .disabled(!isModified) // only if modified
+            .alert("Success", isPresented: $showSuccessMessage, actions: {
+                Button("OK", role: .cancel) {}
+            }, message: {
+                Text("Your changes have been saved successfully!")
+            })
 
             Spacer()
         }
@@ -125,9 +116,11 @@ struct ProfileView: View {
         )
     }
 
-    // not working yet
     private func saveChanges() {
-        guard let user = fireAuthHelper.user else { return }
+        guard let user = fireAuthHelper.user else {
+            print("No user found in fireAuthHelper!")
+            return
+        }
         
         if !password.isEmpty && password != confirmPassword {
             print("Passwords do not match!")
@@ -135,6 +128,7 @@ struct ProfileView: View {
         }
 
         let updatedUser = UserModel(
+            id: user.id, // Certifique-se de que o ID do usuário está definido
             name: name,
             email: email,
             address: address,
@@ -143,8 +137,9 @@ struct ProfileView: View {
             creditCard: creditCard.isEmpty ? nil : creditCard
         )
 
+        print("Updating user: \(updatedUser)")
         fireAuthHelper.updateUser(updatedUser, newPassword: password.isEmpty ? nil : password)
         isModified = false
+        showSuccessMessage = true
     }
 }
-

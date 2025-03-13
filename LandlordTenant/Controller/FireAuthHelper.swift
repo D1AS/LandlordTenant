@@ -1,10 +1,3 @@
-//
-//  FireAuthHelper.swift
-//  LandlordTenant
-//
-//  Created by Henrique Machitte on 06/03/25.
-//
-
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
@@ -50,7 +43,7 @@ class FireAuthHelper: ObservableObject {
         }
     }
 
-    func signIn(email: String, password: String,completion: @escaping (Bool) -> Void) {
+    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
                 print("Signin failed: \(error.localizedDescription)")
@@ -66,6 +59,7 @@ class FireAuthHelper: ObservableObject {
                 if let snapshot = snapshot, snapshot.exists {
                     do {
                         self.user = try snapshot.data(as: UserModel.self)
+                        self.user?.id = uid // Certifique-se de que o ID do usuário está definido
                         self.isSuccess = true
                         print("User signed in: \(self.user?.name ?? "Unknown")")
                     } catch {
@@ -76,7 +70,40 @@ class FireAuthHelper: ObservableObject {
         }
     }
 
+    func updateUser(_ updatedUser: UserModel, newPassword: String?) {
+        guard let userId = updatedUser.id else {
+            print("Error: User ID is missing")
+            return
+        }
 
+        let userRef = db.collection("users").document(userId)
+
+        do {
+            try userRef.setData(from: updatedUser, merge: true) { error in
+                if let error = error {
+                    print("Error updating user data: \(error.localizedDescription)")
+                } else {
+                    print("User updated successfully!")
+                    DispatchQueue.main.async {
+                        self.user = updatedUser
+                    }
+                }
+            }
+        } catch {
+            print("Error encoding user data: \(error.localizedDescription)")
+        }
+
+        if let newPassword = newPassword, !newPassword.isEmpty {
+            Auth.auth().currentUser?.updatePassword(to: newPassword) { error in
+                if let error = error {
+                    print("Error updating password: \(error.localizedDescription)")
+                } else {
+                    print("Password updated successfully!")
+                }
+            }
+        }
+    }
+    
     // Logout function
     func signOut() {
         do {
@@ -89,7 +116,6 @@ class FireAuthHelper: ObservableObject {
         }
     }
     
-
     func toggleFavoriteProperty(propertyId: String) {
         guard let user = user else {
             print("No authenticated user")
@@ -107,7 +133,7 @@ class FireAuthHelper: ObservableObject {
             if let document = document, document.exists {
                 var propertyIDs = document.data()?["propertyIDs"] as? [String] ?? []
 
-                if propertyIDs.contains(propertyId) {
+                if (propertyIDs.contains { $0 == propertyId }) {
                     // Remove from favorites
                     propertyIDs.removeAll { $0 == propertyId }
                 } else {
@@ -145,11 +171,11 @@ class FireAuthHelper: ObservableObject {
             if let document = document, document.exists {
                 var propertyIDs = document.data()?["requestpropertyIDs"] as? [String] ?? []
 
-                if propertyIDs.contains(propertyId) {
-                    // Remove from favorites
+                if (propertyIDs.contains { $0 == propertyId }) {
+                    // Remove from requests
                     propertyIDs.removeAll { $0 == propertyId }
                 } else {
-                    // Add to favorites
+                    // Add to requests
                     propertyIDs.append(propertyId)
                 }
 
@@ -158,13 +184,14 @@ class FireAuthHelper: ObservableObject {
                     if let error = error {
                         print("Error updating requests: \(error.localizedDescription)")
                     } else {
-                        print("request updated successfully")
+                        print("Requests updated successfully")
                         self.user?.requestpropertyIDs = propertyIDs // Update local user data
                     }
                 }
             }
         }
     }
+    
     func fetchUserType(email: String, completion: @escaping (String?) -> Void) {
         let db = Firestore.firestore()
         db.collection("users").whereField("email", isEqualTo: email).getDocuments { snapshot, error in
@@ -216,7 +243,6 @@ class FireAuthHelper: ObservableObject {
 
     @Published var propertyAddresses: [String: String] = [:]  // Stores propertyId -> address mapping
 
-  
     func fetchPropertyAddresses() {
         db.collection("Properties").getDocuments { snapshot, error in
             if let error = error {
@@ -237,13 +263,4 @@ class FireAuthHelper: ObservableObject {
             }
         }
     }
-
-
-
-
-
-
-
-
-
 }

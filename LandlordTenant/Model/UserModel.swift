@@ -1,11 +1,3 @@
-//
-//  UserModel.swift
-//  LandlordTenant
-//
-//  Created by Henrique Machitte on 10/03/25.
-//
-//
-
 import Foundation
 import FirebaseFirestore
 
@@ -19,9 +11,9 @@ struct UserModel: Codable, Identifiable {
     var creditCard: String? // Optional
     var propertyIDs: [String] // List of property IDs associated with the user
     var requestpropertyIDs: [String]
-    
 
-    init(name: String, email: String, address: String, phoneNumber: String, typeOfUser: String, creditCard: String? = nil) {
+    init(id: String? = nil, name: String, email: String, address: String, phoneNumber: String, typeOfUser: String, creditCard: String? = nil) {
+        self.id = id
         self.name = name
         self.email = email
         self.address = address
